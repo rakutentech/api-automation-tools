@@ -89,7 +89,7 @@ def compare_dictionaries(d1, d2, skipped_keys=None, exclusive_keys=None, normali
 
     if mismatched_keys:
         keys = {'f1_not_in_f2': f1_not_in_f2, 'f2_not_in_f1': f2_not_in_f1}
-        mismatches['keys'] = {k: v for k, v in keys.items() if v}
+        mismatches['keys'] = [{k: v for k, v in keys.items() if v}]
     if mismatched_values:
         mismatches['values'] = mismatched_values
     if skipped_keys:
