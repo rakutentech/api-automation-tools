@@ -47,12 +47,21 @@ csv file can be stored and used for reference validation of subsequent runs.
 from apiautomationtools.client import AsyncRequests
 
 async_requests = AsyncRequests()
+
 batch = {'method': 'get', 'headers': {...}, 'url': '...', ...any classic requests arguments}
+response = async_requests.request(batch)
+
 or
+
 batch = [{'method': 'get', ...}, ...]
 response = async_requests.request(batch)
 
-Note: You can indicate where the generator will start looking for path parameters by placing
+or 
+
+batch = generate_batch("get", {...}, "https://httpbin.org/get")
+response = async_requests.request(batch)
+
+Note: You can indicate where the batch generator will start looking for path parameters by placing
       a semicolon (;) where the path parameters start e.g. https://httpbin.org/get;/param/value.
 ```
 
