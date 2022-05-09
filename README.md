@@ -51,6 +51,9 @@ batch = {'method': 'get', 'headers': {...}, 'url': '...', ...any classic request
 or
 batch = [{'method': 'get', ...}, ...]
 response = async_requests.request(batch)
+
+Note: You can indicate where the generator will start looking for path parameters by placing
+      a semicolon (;) where the path parameters start e.g. https://httpbin.org/get;/param/value.
 ```
 
 ### Validations
