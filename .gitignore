@@ -4,6 +4,7 @@ __pycache__
 *.egg-info
 build
 dist
+*run_info*
 
 .DS_Store
 *mb*.css

@@ -1,5 +1,5 @@
-from apiautomationtools.pytest import ApiPytestHelper
 from apiautomationtools.client import AsyncRequests
+from apiautomationtools.pytest import ApiPytestHelper
 
 
 class APIBasePytestExample(ApiPytestHelper):
