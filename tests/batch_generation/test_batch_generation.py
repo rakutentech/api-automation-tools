@@ -435,11 +435,11 @@ def test_generate_batch_all_true():
     assert str(batch) == str(expected_batch)
 
 
-def test_generate_batch_body():
+def test_generate_batch_json_body():
     url = "https://httpbin.org/get/houseId/1b"
     body = {"field1": "value1", "field2": 2}
     batch = bg.generate_batch(
-        method="post", headers={"key1": "value1"}, url=url, body=body
+        method="post", headers={"key1": "value1"}, url=url, json=body
     )
 
     expected_batch = [
@@ -559,14 +559,138 @@ def test_generate_batch_body():
     assert str(batch) == str(expected_batch)
 
 
-def test_generate_batch_body_and_unsafe_bodies():
+def test_generate_batch_data_body():
+    url = "https://httpbin.org/get/houseId/1b"
+    body = {"field1": "value1", "field2": 2}
+    batch = bg.generate_batch(
+        method="post", headers={"key1": "value1"}, url=url, data=body
+    )
+
+    expected_batch = [
+        {
+            "code": "201",
+            "description": "good",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "field2": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/999a",
+            "data": {"field1": "value1", "field2": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"aaaaa999": "value1", "field2": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "aaaaa999", "field2": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "aaaaa999": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "field2": 999},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"aaaaa999": 999},
+        },
+        {
+            "code": "401",
+            "description": "not auth",
+            "method": "post",
+            "headers": {"key1": "aaaaa0"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "field2": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/0a",
+            "data": {"field1": "value1", "field2": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"aaaaa0": "value1", "field2": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "aaaaa0", "field2": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "aaaaa0": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "field2": 0},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"aaaaa0": 0},
+        },
+    ]
+    assert str(batch) == str(expected_batch)
+
+
+def test_generate_batch_body_and_unsafe_json_bodies():
     url = "https://httpbin.org/get/houseId/1b"
     body = {"field1": "value1", "field2": 2}
     batch = bg.generate_batch(
         method="post",
         headers={"key1": "value1"},
         url=url,
-        body=body,
+        json=body,
         unsafe_bodies=True,
     )
     expected_batch = [
@@ -959,6 +1083,414 @@ def test_generate_batch_body_and_unsafe_bodies():
             "headers": {"key1": "value1"},
             "url": "https://httpbin.org/get/houseId/1b",
             "json": {
+                "field1": "value1 UNION SELECT * FROM information_schema.tables --",
+                "field2": "2 UNION SELECT * FROM information_schema.tables --",
+            },
+        },
+    ]
+    assert str(batch) == str(expected_batch)
+
+
+def test_generate_batch_body_and_unsafe_data_bodies():
+    url = "https://httpbin.org/get/houseId/1b"
+    body = {"field1": "value1", "field2": 2}
+    batch = bg.generate_batch(
+        method="post",
+        headers={"key1": "value1"},
+        url=url,
+        data=body,
+        unsafe_bodies=True,
+    )
+    expected_batch = [
+        {
+            "code": "201",
+            "description": "good",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "field2": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/999a",
+            "data": {"field1": "value1", "field2": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"aaaaa999": "value1", "field2": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "aaaaa999", "field2": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "aaaaa999": 2},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "field2": 999},
+        },
+        {
+            "code": "400",
+            "description": "invalid",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"aaaaa999": 999},
+        },
+        {
+            "code": "401",
+            "description": "not auth",
+            "method": "post",
+            "headers": {"key1": "aaaaa0"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "field2": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/0a",
+            "data": {"field1": "value1", "field2": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"aaaaa0": "value1", "field2": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "aaaaa0", "field2": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "aaaaa0": 2},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1", "field2": 0},
+        },
+        {
+            "code": "404",
+            "description": "not found",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"aaaaa0": 0},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1  '--", "field2": "2  '--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1 '+OR+1=1--", "field2": "2 '+OR+1=1--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1  '--", "field2": "2  '--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 ' and substr(version(),1,10) = 'PostgreSQL' and '1  -> OK",
+                "field2": "2 ' and substr(version(),1,10) = 'PostgreSQL' and '1  -> OK",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1  '--", "field2": "2  '--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 SELECT version() --",
+                "field2": "2 SELECT version() --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1  '--", "field2": "2  '--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 select database_to_xml(true,true,'');",
+                "field2": "2 select database_to_xml(true,true,'');",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1  '--", "field2": "2  '--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 UNION SELECT * FROM information_schema.tables --",
+                "field2": "2 UNION SELECT * FROM information_schema.tables --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1 '+OR+1=1--", "field2": "2 '+OR+1=1--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 SELECT version() --",
+                "field2": "2 SELECT version() --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1 '+OR+1=1--", "field2": "2 '+OR+1=1--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 select database_to_xml(true,true,'');",
+                "field2": "2 select database_to_xml(true,true,'');",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {"field1": "value1 '+OR+1=1--", "field2": "2 '+OR+1=1--"},
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 UNION SELECT * FROM information_schema.tables --",
+                "field2": "2 UNION SELECT * FROM information_schema.tables --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 ' and substr(version(),1,10) = 'PostgreSQL' and '1  -> OK",
+                "field2": "2 ' and substr(version(),1,10) = 'PostgreSQL' and '1  -> OK",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 SELECT version() --",
+                "field2": "2 SELECT version() --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 ' and substr(version(),1,10) = 'PostgreSQL' and '1  -> OK",
+                "field2": "2 ' and substr(version(),1,10) = 'PostgreSQL' and '1  -> OK",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 select database_to_xml(true,true,'');",
+                "field2": "2 select database_to_xml(true,true,'');",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 ' and substr(version(),1,10) = 'PostgreSQL' and '1  -> OK",
+                "field2": "2 ' and substr(version(),1,10) = 'PostgreSQL' and '1  -> OK",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 UNION SELECT * FROM information_schema.tables --",
+                "field2": "2 UNION SELECT * FROM information_schema.tables --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 SELECT version() --",
+                "field2": "2 SELECT version() --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 select database_to_xml(true,true,'');",
+                "field2": "2 select database_to_xml(true,true,'');",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 SELECT version() --",
+                "field2": "2 SELECT version() --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 UNION SELECT * FROM information_schema.tables --",
+                "field2": "2 UNION SELECT * FROM information_schema.tables --",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
+                "field1": "value1 select database_to_xml(true,true,'');",
+                "field2": "2 select database_to_xml(true,true,'');",
+            },
+        },
+        {
+            "code": "???",
+            "description": "unsafe bodies",
+            "method": "post",
+            "headers": {"key1": "value1"},
+            "url": "https://httpbin.org/get/houseId/1b",
+            "data": {
                 "field1": "value1 UNION SELECT * FROM information_schema.tables --",
                 "field2": "2 UNION SELECT * FROM information_schema.tables --",
             },
