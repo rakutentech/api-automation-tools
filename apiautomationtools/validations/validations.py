@@ -1,7 +1,6 @@
 import difflib
 import os.path
 import re
-from copy import deepcopy
 from glob import iglob
 from typing import Any
 

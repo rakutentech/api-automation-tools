@@ -8,6 +8,7 @@ api-automation-tools = {editable = true, path = "."}
 pytest-cov = "*"
 
 [dev-packages]
+autoflake = "*"
 black = "*"
 isort = "*"
 

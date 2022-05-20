@@ -15,7 +15,8 @@ def generate_batch(
     bad_header_count: int = 1,
     include_query_params: bool = True,
     full: bool = False,
-    body: None | dict = None,
+    json: None | dict = None,
+    data: None | dict = None,
     unsafe_bodies: bool = False,
 ) -> list[dict]:
     """
@@ -30,7 +31,8 @@ def generate_batch(
         bad_header_count: The amount of bad header possibilities used.
         include_query_params: Whether to include query params in the bad url generation.
         full: Whether to generate bad values on all strings instead of strings with numbers.
-        body: A json (dict) body of the request.
+        json: A json (dict) body of the request.
+        data: A data (dict) body of the request.
         unsafe_bodies: Whether to include unsafe bodies in the batch.
     Returns:
         batch: The list of 200-500 url combinations.
@@ -114,9 +116,15 @@ def generate_batch(
     ]
     batch = [i for b in batch for i in b]
 
-    if body:
+    if json or data:
+        body = json
+        key = "json"
+        if data:
+            body = data
+            key = "data"
+
         for b in batch:
-            b["json"] = body
+            b[key] = body
 
         good_batch = {
             "code": good_code,
@@ -128,7 +136,7 @@ def generate_batch(
         batch += [
             {
                 **good_batch,
-                **{"json": b, "description": f"{description}invalid"},
+                **{key: b, "description": f"{description}invalid"},
                 "code": "400",
             }
             for b in generate_bad_bodies(body, "999")
@@ -136,7 +144,7 @@ def generate_batch(
         batch += [
             {
                 **good_batch,
-                **{"json": b, "description": f"{description}not found"},
+                **{key: b, "description": f"{description}not found"},
                 "code": "404",
             }
             for b in generate_bad_bodies(body, "0")
@@ -146,7 +154,7 @@ def generate_batch(
             batch += [
                 {
                     **good_batch,
-                    **{"json": b, "description": f"{description}unsafe bodies"},
+                    **{key: b, "description": f"{description}unsafe bodies"},
                     "code": "???",
                 }
                 for b in generate_unsafe_bodies(body)
