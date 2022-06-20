@@ -23,7 +23,8 @@ def read_csv(csv_path: None | str) -> list[list]:
     return [
         [
             ast.literal_eval(i)
-            if not re.findall(r"MultiDict", i) and re.findall(r"[\[{]", i)
+            if not (re.findall(r"MultiDict", i) or re.findall(r"BufferedReader", i))
+            and re.findall(r"[\[{]", i)
             else i
             for i in d
         ]

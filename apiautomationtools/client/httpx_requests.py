@@ -66,15 +66,17 @@ class HttpxRequests(object):
         Returns:
             body: An object with separate fields for files and other json data.
         """
-        _data = deepcopy(kwargs)
         body = {"data": {}}
 
-        for key, value in _data.items():
+        for key, value in kwargs.items():
             if "file" in key:
                 if type(value) is not list:
                     value = [value]
                 body["files"] = [
-                    (key, open(f, "rb")) for f in value if os.path.exists(f)
+                    (key, open(f, "rb"))
+                    if isinstance(f, str | bytes) and os.path.exists(f)
+                    else f
+                    for f in value
                 ]
             else:
                 body["data"][key] = value
@@ -105,14 +107,23 @@ class HttpxRequests(object):
         for i in range(len(data)):
             agg_delay += delay
             d = data[i]
-            f_data = d.pop("data", None)
+
+            f_data = d.pop("data", {})
+            for field in ["file", "files"]:
+                f_file = d.pop(field, None)
+                if f_file:
+                    f_data[field] = f_file
+
             d = deepcopy(d)
             d["delay"] = round(agg_delay, 2)
             d["index"] = i
 
             if f_data:
-                body = self.separate_form_data(**f_data)
+                body = f_data
+                if any(isinstance(field, str | bytes) for field in ["file", "files"]):
+                    body = self.separate_form_data(**f_data)
                 d.update(body)
+
             data[i] = d
 
         kwargs = deepcopy(kwargs)
@@ -123,7 +134,7 @@ class HttpxRequests(object):
         This makes the individual requests.
 
         Args:
-            session: The request making session object.
+            client: The request making client object.
             data: The info needed to make the request eg {'url': ..., 'method': 'get'}.
             **kwargs: The additional params eg headers or data etc. See
                 https://github.com/encode/httpx/blob/5b06aea1d64f0815af6fe71da3ac725bed3ec09f/httpx/_client.py#L1481
@@ -196,12 +207,12 @@ class HttpxRequests(object):
         Args:
             data: The list of info needed to make the request eg [{'url': ..., 'method': 'get'}].
             **kwargs: The additional params eg headers or data etc. See
-                https://github.com/encode/httpx/blob/5b06aea1d64f0815af6fe71da3ac725bed3ec09f/httpx/_client.py#L1481
+                https://github.com/encode/httpx/blob/5b06aea1d64f0815af6fe71da3ac725bed3ec09f/httpx/_client.py#L1291
                 for more details.
         """
         try:
             if not self.client:
-                self.client = httpx.AsyncClient(**self.client_configs)
+                self.client = httpx.AsyncClient(timeout=300, **self.client_configs)
 
             return await pl.task.each(
                 lambda d: self._request(self.client, d, **kwargs),
