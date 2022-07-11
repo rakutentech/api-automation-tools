@@ -6,7 +6,16 @@ def readme():
         return f.read()
 
 
-requires = ["pytest", "pytest-xdist", "aiohttp", "pypeln", "numpy", "orjson"]
+requires = [
+    "pytest",
+    "pytest-xdist",
+    "aiohttp",
+    "pypeln",
+    "numpy",
+    "orjson",
+    "httpx",
+    "pytest-asyncio",
+]
 
 
 setup(

@@ -3,13 +3,12 @@ import os
 import pytest
 
 import apiautomationtools.helpers.directory_helpers as dh
-from apiautomationtools.client.async_requests import AsyncRequests
+from apiautomationtools.client import AsyncRequests
 
 pytestmark = pytest.mark.client
 
-# different root_dir because of the async_requests test
-root_dir = os.path.dirname(__file__) + "/form_data"
-expected_form_data = """[(<MultiDict('name': 'field1')>, {}, 'value1'), (<MultiDict('name': 'file', 'filename': 'test_dict_as_form_data.py')>, {'Content-Type': 'text/html'}, <_io.BufferedReader name='root_dir/tests/client/test_dict_as_form_data.py'>)]"""
+root_dir = f"{os.path.dirname(__file__)}/{__name__.split('.')[-1]}"
+expected_form_data = """[(<MultiDict('name': 'field1')>, {}, 'value1'), (<MultiDict('name': 'file', 'filename': 'test_dict_as_form_data.py')>, {'Content-Type': 'text/html'}, <_io.BufferedReader name='root_dir/tests/client/aiohttp/test_dict_as_form_data.py'>)]"""
 expected_form_data = expected_form_data.replace("root_dir", dh.get_root_dir())
 
 

@@ -1,1 +1,2 @@
 from apiautomationtools.client.async_requests import AsyncRequests
+from apiautomationtools.client.httpx_requests import HttpxRequests
