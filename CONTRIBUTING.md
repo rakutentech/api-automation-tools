@@ -23,8 +23,9 @@ Please fill the following information in each issue you submit:
 
 1. Fork the project
 2. Implement feature/fix bug & add test cases
-3. Ensure test cases & static analysis runs successfully
-4. Submit a pull request to `master` branch
+3. Run `. scripts/code_quality/linter.sh`
+4. Ensure test cases & static analysis runs successfully
+5. Submit a pull request to `master` branch
 
 Please include additional tests where necessary to cover any functionality that is introduced.
 

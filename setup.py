@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def readme():
@@ -7,11 +7,14 @@ def readme():
 
 
 requires = [
-    'pytest',
-    'pytest-xdist',
-    'aiohttp',
-    'pypeln',
-    'numpy'
+    "pytest",
+    "pytest-xdist",
+    "aiohttp",
+    "pypeln",
+    "numpy",
+    "orjson",
+    "httpx",
+    "pytest-asyncio",
 ]
 
 
@@ -31,5 +34,5 @@ setup(
     ],
     packages=find_packages(),
     python_requires=">=3.8",
-    install_requires=requires
+    install_requires=requires,
 )

@@ -1,7 +1,8 @@
 import json
+from typing import Any
 
 
-def ensure_serializable(data):
+def ensure_serializable(data: Any) -> Any:
     """
     This ensures data is serializable.
 
@@ -18,12 +19,12 @@ def ensure_serializable(data):
         return str(data)
 
 
-def deserialize(text, other_exceptions=None):
+def deserialize(text: str | bytes, other_exceptions: Any = None) -> dict | str | bytes:
     """
     This converts json to its pythonic object.
 
     Args:
-        text (str): The string to convert.
+        text: The string to convert.
         other_exceptions: Other exceptions to catch.
 
     Returns:

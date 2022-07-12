@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+api-automation-tools = {editable = true, path = "."}
+
+[dev-packages]
+autoflake = "*"
+black = "*"
+isort = "*"
+pytest-cov = "*"
+
+[requires]
+python_version = "3.10"

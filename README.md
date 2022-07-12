@@ -1,20 +1,25 @@
 # API automated testing in Python
-This provides a starting point for automating API's in Python using the pytest and the aiohttp frameworks on macOS.
+This is a starting point for automating API's in Python using the pytest and the AIOHTTP or HTTPX libraries on macOS.
 
 ## Required dependencies
+In the terminal run
+
 1. `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"`
-2. `brew install --cask docker`
-3. `brew install pyenv`
-4. `PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv install 3.8.12 && pyenv global 3.8.12 && echo export PATH="$(pyenv root)/shims:$PATH" >> ~/.bash_profile && . ~/.bash_profile && pip install pipenv`
+2. `brew install pyenv`
+3. `PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv install 3.10.3 && pyenv global 3.10.3 && echo export PATH="$(pyenv root)/shims:$PATH" >> ~/.bash_profile && . ~/.bash_profile && pip install pipenv`
 
 ## Pip Installation
-1. In the terminal cd into the root of your main test project
-2. In the terminal run [`pip install api-automation-tools`](https://pypi.org/project/api-automation-tools/)
+In the terminal
+
+1. Cd into the root of your test project
+2. Run [`pip install api-automation-tools`](https://pypi.org/project/api-automation-tools/)
 
 ## Local Setup
-1. Clone this repo
-2. In the terminal cd into the root of your main test project
-3. In the terminal run `pip install -e path_to_apiautomationtools`
+In the terminal
+
+1. Fork and clone this repository
+2. Cd into the root of your test project
+3. Run `pip install -e path_to_apiautomationtools`
 
 ## Usage
 ### Helpers
@@ -38,19 +43,35 @@ class SomeBasePytest(ApiPytestHelper):
         ...
 ```
 
-### Aiohttp
-This class wraps up an easy to use method for making async requests. All the standard requests request
+### Requests with AIOHTTP or HTTPX
+These classes wrap easy to use methods for making async requests. All the standard requests request
 arguments are still applicable. As requests are completed, their data is saved in two csv files. One 
 csv file contains the actual data sent, while the other contains a scrubbed set of data. The scrubbed 
 csv file can be stored and used for reference validation of subsequent runs.
 ```
-from apiautomationtools.client import AsyncRequests
+from apiautomationtools.client import AsyncRequests, HttpxRequests
 
-async_requests = AsyncRequests()
+aiohttp_requests = AsyncRequests()
+httpx_requests = HttpxRequests()
+
 batch = {'method': 'get', 'headers': {...}, 'url': '...', ...any classic requests arguments}
+response = aiohttp_requests.request(batch)
+response = httpx_requests.request(batch)
+
 or
+
 batch = [{'method': 'get', ...}, ...]
-response = async_requests.request(batch)
+responses = aiohttp_requests.request(batch)
+responses = httpx_requests.request(batch)
+
+or 
+
+batch = generate_batch("get", {...}, "https://httpbin.org/get")
+response = aiohttp_requests.request(batch)
+response = httpx_requests.request(batch)
+
+Note: You can indicate where the batch generator will start looking for path parameters by placing
+      a semicolon (;) where the path parameters start e.g. https://httpbin.org/get;/param/value.
 ```
 
 ### Validations
