@@ -20,7 +20,7 @@ requires = [
 
 setup(
     name="api-automation-tools",
-    version="1.0.0",
+    version="2.0.0",
     author="Ashton Szabo",
     author_email="ashton.szabo@rakuten.com",
     description="Tools for API automation",
@@ -33,6 +33,6 @@ setup(
         "Operating System :: OS Independent",
     ],
     packages=find_packages(),
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=requires,
 )
