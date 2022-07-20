@@ -5,6 +5,7 @@ __pycache__
 build
 dist
 *run_info*
+Pipfile.lock
 
 .DS_Store
 *mb*.css

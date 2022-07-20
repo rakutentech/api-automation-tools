@@ -43,7 +43,6 @@ def test_generate_bad_urls_full():
     url = "https://httpbin.org/get/houseId/1b/2c?param1=value1&another_param=2"
     bad_urls = bg.generate_bad_urls(url, "0", full=True)
     expected_urls = [
-        "https://httpbin.org/get/houseId/1b/2c?param1=value1&another_param=2",
         "https://httpbin.org/aaa/houseId/1b/2c?param1=value1&another_param=2",
         "https://httpbin.org/get/aaaaaaa/1b/2c?param1=value1&another_param=2",
         "https://httpbin.org/get/houseId/0a/2c?param1=value1&another_param=2",

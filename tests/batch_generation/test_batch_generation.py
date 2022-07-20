@@ -317,13 +317,6 @@ def test_generate_batch_all_true():
             "description": "invalid",
             "method": "get",
             "headers": {"key1": "value1"},
-            "url": "https://httpbin.org/get/houseId/1b?query=value1&query=value2",
-        },
-        {
-            "code": "400",
-            "description": "invalid",
-            "method": "get",
-            "headers": {"key1": "value1"},
             "url": "https://httpbin.org/aaa/houseId/1b?query=value1&query=value2",
         },
         {
@@ -373,13 +366,6 @@ def test_generate_batch_all_true():
             "description": "not auth",
             "method": "get",
             "headers": {"key1": "aaaaa0"},
-            "url": "https://httpbin.org/get/houseId/1b?query=value1&query=value2",
-        },
-        {
-            "code": "404",
-            "description": "not found",
-            "method": "get",
-            "headers": {"key1": "value1"},
             "url": "https://httpbin.org/get/houseId/1b?query=value1&query=value2",
         },
         {

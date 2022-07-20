@@ -11,9 +11,8 @@ def test_generate_bad_bodies_sub_value():
     expected_bodies = [
         {"aaaaa0": "value1", "field2": "2", "file": "file", "file2": "file2"},
         {"field1": "aaaaa0", "field2": "2", "file": "file", "file2": "file2"},
-        {"field1": "value1", "aaaaa0": "2", "file": "file", "file2": "file2"},
+        {"aaaaa0": "2", "field1": "value1", "file": "file", "file2": "file2"},
         {"field1": "value1", "field2": "0", "file": "file", "file2": "file2"},
-        {"field1": "value1", "field2": "2", "file": "file", "file2": "file2"},
         {"aaaaa0": "0", "file": "file", "file2": "file2"},
     ]
     assert bad_bodies == expected_bodies
@@ -36,7 +35,6 @@ def test_generate_bad_bodies_full():
         {"field1": "aaaaa0", "field2": "2", "file": "file", "file2": "file2"},
         {"field1": "value1", "aaaaa0": "2", "file": "file", "file2": "file2"},
         {"field1": "value1", "field2": "0", "file": "file", "file2": "file2"},
-        {"field1": "value1", "field2": "2", "file": "file", "file2": "file2"},
         {"aaaaa0": "0", "file": "file", "file2": "file2"},
     ]
     assert bad_bodies == expected_bodies
@@ -48,6 +46,5 @@ def test_generate_bad_bodies_original_keys():
     expected_bodies = [
         {"field1": "aaaaa0", "field2": "2", "file": "file", "file2": "file2"},
         {"field1": "value1", "field2": "0", "file": "file", "file2": "file2"},
-        {"field1": "value1", "field2": "2", "file": "file", "file2": "file2"},
     ]
     assert bad_bodies == expected_bodies
