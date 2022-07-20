@@ -298,7 +298,7 @@ def generate_bad_data(
                     _bad_data = _bad_data[:-1]
 
                 _bad_data = re.sub(rf"\b{c[0]}\b", c[1], _bad_data)
-                if _bad_data not in bad_datas:
+                if _bad_data != data and _bad_data not in bad_datas:
                     bad_datas.append(_bad_data)
 
         if bad_data not in bad_datas:
