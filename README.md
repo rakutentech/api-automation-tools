@@ -23,7 +23,7 @@ In the terminal
 
 ## Usage
 ### Helpers
-```
+``` python
 import apiautomationtools.helpers.dictionary_helpers as dh
 import apiautomationtools.helpers.directory_helpers as dh
 import apiautomationtools.helpers.json_helpers as js
@@ -32,7 +32,7 @@ import apiautomationtools.helpers.json_helpers as js
 ### Pytest
 This class setup creates boilerplate data directories for tests and credentials. The teardown performs 
 validations and organizational restructuring on any test generated data.
-```
+``` python
 import pytest
 from apiautomationtools.pytest import ApiPytestHelper
 
@@ -48,7 +48,7 @@ These classes wrap easy to use methods for making async requests. All the standa
 arguments are still applicable. As requests are completed, their data is saved in two csv files. One 
 csv file contains the actual data sent, while the other contains a scrubbed set of data. The scrubbed 
 csv file can be stored and used for reference validation of subsequent runs.
-```
+``` python
 from apiautomationtools.client import AsyncRequests, HttpxRequests
 
 aiohttp_requests = AsyncRequests()
@@ -77,7 +77,7 @@ Note: You can indicate where the batch generator will start looking for path par
 ### Validations
 This class performs a difference between scrubbed csv files of the stored and live data generated from 
 the responses of the request method. Any mismatches can be raised as errors.
-```
+``` python
 from apiautomationtools.validations import Validations
 
 validations = Validations()
